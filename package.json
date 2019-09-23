@@ -1,0 +1,9 @@
+{
+    "name": "typescript-vm",
+    "scripts": {
+        "test": "tsc --noEmit tests.ts"
+    },
+    "dependencies": {
+        "typescript": "^3.6.3"
+    }
+}
