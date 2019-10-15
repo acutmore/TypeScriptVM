@@ -56,7 +56,7 @@ type InnerVM<
 type Tick<
   Program extends Instructions[],
   PC extends any[] = [], // program-counter - length of array indexes into Instructions
-  Stack extends Num[] = [],
+  Stack extends any[] = [],
   StdOut extends string[] = []
 > = {
   // Define all the VM instructions
@@ -66,7 +66,6 @@ type Tick<
   'peek': Tick<Program, Prepend<any, PC>, Prepend<Head<Tail<Stack>>, Stack>, StdOut>;
   'replace': Tick<Program, Prepend<any, PC>, Prepend<Program[PC["length"]][1], Tail<Stack>>, StdOut>;
   'inc': Tick<Program, Prepend<any, PC>, Prepend<ADD_4<Head<Stack>, N_1>, Tail<Stack>>, StdOut>;
-  // @ts-ignore - convince TypeScript that division is not infinite
   'mod': Tick<Program, Prepend<any, PC>, Prepend<MOD_4<Head<Stack>, Program[PC["length"]][1]>, Tail<Stack>>, StdOut>;
   'eq': Tick<Program, Prepend<any, PC>, Prepend<EQ_4<Head<Stack>, Program[PC["length"]][1]>, Stack>, StdOut>;
   // 'jump' seems as good a natural time to bounce on the trampoline
@@ -106,12 +105,17 @@ export type True = N_1;
 type MOD_4<
   numerator extends Num,
   divisor extends Num,
-  /* variables: */
-  result extends any = DIV_4<numerator, divisor>
-> = {
-  1: result["remainder"];
-  0: N_0;
-}[result["tag"] extends "result" ? 1 : 0];
+> = DIV_4<numerator, divisor>['remainder'];
+
+type Divider<
+  remainder extends BITS_4,
+  divisor extends BITS_4,
+  count extends BITS_4
+> = COMP_4<remainder, divisor>["less"] extends 1
+  ? [count, remainder]
+  : [ADD_4<N_1, count>, SUB_4<remainder, divisor>];
+
+type AsBITS_4<N> = N extends BITS_4 ? N : never;
 
 type DIV_4<
   numerator extends BITS_4,
@@ -119,12 +123,27 @@ type DIV_4<
   /* variables: */
   count extends BITS_4 = N_0,
   remainder extends BITS_4 = numerator
-> = {
-  // remainder < divisor
-  1: { tag: "result"; count: count; remainder: remainder };
-  // remainder >= divisor
-  0: DIV_4<numerator, divisor, ADD_4<count, N_1>, SUB_4<remainder, divisor>>;
-}[COMP_4<remainder, divisor>["less"] extends 1 ? 1 : 0];
+> = (
+  Divider<remainder, divisor, count> extends [infer C, infer R]
+  ? Divider<AsBITS_4<R>, divisor, AsBITS_4<C>> extends [infer C, infer R]
+  ? Divider<AsBITS_4<R>, divisor, AsBITS_4<C>> extends [infer C, infer R]
+  ? Divider<AsBITS_4<R>, divisor, AsBITS_4<C>> extends [infer C, infer R]
+  ? Divider<AsBITS_4<R>, divisor, AsBITS_4<C>> extends [infer C, infer R]
+  ? Divider<AsBITS_4<R>, divisor, AsBITS_4<C>> extends [infer C, infer R]
+  ? Divider<AsBITS_4<R>, divisor, AsBITS_4<C>> extends [infer C, infer R]
+  ? Divider<AsBITS_4<R>, divisor, AsBITS_4<C>> extends [infer C, infer R]
+  ? Divider<AsBITS_4<R>, divisor, AsBITS_4<C>> extends [infer C, infer R]
+  ? Divider<AsBITS_4<R>, divisor, AsBITS_4<C>> extends [infer C, infer R]
+  ? Divider<AsBITS_4<R>, divisor, AsBITS_4<C>> extends [infer C, infer R]
+  ? Divider<AsBITS_4<R>, divisor, AsBITS_4<C>> extends [infer C, infer R]
+  ? Divider<AsBITS_4<R>, divisor, AsBITS_4<C>> extends [infer C, infer R]
+  ? Divider<AsBITS_4<R>, divisor, AsBITS_4<C>> extends [infer C, infer R]
+  ? Divider<AsBITS_4<R>, divisor, AsBITS_4<C>> extends [infer C, infer R]
+  ? Divider<AsBITS_4<R>, divisor, AsBITS_4<C>> extends [infer C, infer R]
+  ? { count: C; remainder: R }
+  : never : never : never : never : never : never : never : never
+  : never : never : never : never : never : never : never : never
+);
 
 type MUL_4<
   regA extends BITS_4,

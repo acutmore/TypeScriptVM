@@ -2,8 +2,34 @@ import { VM, True, False, N_1, N_3, N_5, N_15, Line } from './vm';
 
 type _ = '';
 
-type FizzBuzz = VM<[
+//#region Counter /////////////////////////////////////////////////////////////
+
+type Counter = VM<[
     ['push', N_1],         // 1
+    ['printHead', _],      // 2
+    ['eq', N_15],          // 3
+    ['ifNZero', Line<7>],  // 4
+    ['inc', _],            // 5
+    ['jump', Line<2>],     // 6
+    ['stop', _]            // 7
+  ]>;
+
+interface TestCounter {
+    expected: {
+        stdOut: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"]
+    }
+    actual: TestCounter['expected']
+}
+interface TestCounter {
+    actual: Counter
+}
+
+//#endregion Counter //////////////////////////////////////////////////////////
+
+//#region FizzBuzz ////////////////////////////////////////////////////////////
+
+type FizzBuzz = VM<[
+    ['push', N_1],        // 1
     ['push', False],       // 2
     ['peek', _],           // 3
     ['mod', N_3],          // 4
@@ -34,3 +60,5 @@ interface TestFizzBuzz {
 interface TestFizzBuzz {
     actual: FizzBuzz
 }
+
+//#endregion FizzBuzz /////////////////////////////////////////////////////////
