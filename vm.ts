@@ -56,7 +56,7 @@ type InnerVM<
 type Tick<
   Program extends Instructions[],
   PC extends any[] = [], // program-counter - length of array indexes into Instructions
-  Stack extends any[] = [],
+  Stack extends Num[] = [],
   StdOut extends string[] = []
 > = {
   // Define all the VM instructions
@@ -105,7 +105,7 @@ export type True = N_1;
 type MOD_4<
   numerator extends Num,
   divisor extends Num,
-> = DIV_4<numerator, divisor>['remainder'];
+> = AsBITS_4<DIV_4<numerator, divisor>['remainder']>;
 
 type Divider<
   remainder extends BITS_4,
@@ -169,7 +169,7 @@ type SUB_4<
   b extends SUBTRACT_RESULT = FULL_SUBTRACTOR<a["borrow"], regA[1], regB[1]>,
   c extends SUBTRACT_RESULT = FULL_SUBTRACTOR<b["borrow"], regA[2], regB[2]>,
   d extends SUBTRACT_RESULT = FULL_SUBTRACTOR<c["borrow"], regA[3], regB[3]>
-> = [a["diff"], b["diff"], c["diff"], d["diff"]];
+> = AsBITS_4<[a["diff"], b["diff"], c["diff"], d["diff"]]>;
 
 type ADD_4<
   regA extends BITS_4,
@@ -179,7 +179,7 @@ type ADD_4<
   b extends ADDER_RESULT = FULL_ADDER<a["carry"], regA[1], regB[1]>,
   c extends ADDER_RESULT = FULL_ADDER<b["carry"], regA[2], regB[2]>,
   d extends ADDER_RESULT = FULL_ADDER<c["carry"], regA[3], regB[3]>
-> = [a["sum"], b["sum"], c["sum"], d["sum"]];
+> = AsBITS_4<[a["sum"], b["sum"], c["sum"], d["sum"]]>;
 
 type FULL_SUBTRACTOR<
   borrow extends B,
